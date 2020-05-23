@@ -22,8 +22,15 @@ public class LsMethods {
 
     private ArrayList<File> FileListMaker(File testFile) {
         ArrayList<File> testFileList = new ArrayList<>();
+        if (!testFile.exists()) {
+            System.out.println("File or Directory doesn't exist");
+            System.out.close();
+        }
+        if (testFile.isDirectory() & testFile.length() == 0)
+            System.out.println("The size of this folder = 0, if there is no list below, then the folder is empty");
         if (testFile.isDirectory()) Collections.addAll(testFileList, Objects.requireNonNull(testFile.listFiles()));
         else testFileList.add(testFile);
+        testFileList.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         return testFileList;
     }
 
