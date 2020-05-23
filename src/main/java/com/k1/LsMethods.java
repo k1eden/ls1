@@ -64,6 +64,27 @@ public class LsMethods {
         long size = file.length();
         String testSize = "";
 
+        if (file.isDirectory()) {
+            long size1 = 0L;
+            File[] subFile = file.listFiles();
+            assert subFile != null;
+            for (File file1 : subFile) {
+                if (file1.isFile()) size1 += file1.length();
+            }
+
+            if (size1 < 1024)
+            testSize += size1 + "b";
+            else if (size1 < 1024 * 1024)
+                testSize += size1 / 1024 + "kb";
+            else if (size1 < 1024 * 1024 * 1024)
+                testSize += size1 / (1024 * 1024) + "mb";
+            else
+                testSize += size1 / (1024 * 1024 * 1024) + "gb";
+
+            return testSize;
+
+        }  else
+
         if (size < 1024)
             testSize += size + "b";
         else if (size < 1024 * 1024)
