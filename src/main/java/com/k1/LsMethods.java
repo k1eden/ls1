@@ -12,12 +12,28 @@ public class LsMethods {
     private String foD;
     private String output;
 
-    public LsMethods(String FoD, boolean FlagL, boolean FlagH, boolean FlagR, String output){
+    public LsMethods(String FoD, boolean FlagL, boolean FlagH, boolean FlagR, String output) {
         this.foD = FoD;
         this.flagH = FlagH;
         this.flagR = FlagR;
         this.flagL = FlagL;
         this.output = output;
+    }
+
+    private static long getFolderSize(File folder) {
+        long length = 0;
+        File[] files = folder.listFiles();
+
+        int count = files.length;
+
+        for (int i = 0; i < count; i++) {
+            if (files[i].isFile()) {
+                length += files[i].length();
+            } else {
+                length += getFolderSize(files[i]);
+            }
+        }
+        return length;
     }
 
     private ArrayList<File> FileListMaker(File testFile) {
@@ -62,18 +78,13 @@ public class LsMethods {
 
     public static String flagHSize(File file) {
         long size = file.length();
+        long size1;
         String testSize = "";
 
         if (file.isDirectory()) {
-            long size1 = 0L;
-            File[] subFile = file.listFiles();
-            assert subFile != null;
-            for (File file1 : subFile) {
-                if (file1.isFile()) size1 += file1.length();
-            }
-
+            size1 = getFolderSize(file);
             if (size1 < 1024)
-            testSize += size1 + "b";
+                testSize += size1 + "b";
             else if (size1 < 1024 * 1024)
                 testSize += size1 / 1024 + "kb";
             else if (size1 < 1024 * 1024 * 1024)
@@ -82,10 +93,7 @@ public class LsMethods {
                 testSize += size1 / (1024 * 1024 * 1024) + "gb";
 
             return testSize;
-
-        }  else
-
-        if (size < 1024)
+        } else if (size < 1024)
             testSize += size + "b";
         else if (size < 1024 * 1024)
             testSize += size / 1024 + "kb";
@@ -108,7 +116,7 @@ public class LsMethods {
 
         if (flagH) fLen = flagHSize(testFile);
 
-        String finalFile = flagR ? String.format("%s %s %s %s", fLen,  lMod, Perm(testFile), testFile.getName())
+        String finalFile = flagR ? String.format("%s %s %s %s", fLen, lMod, Perm(testFile), testFile.getName())
                 : String.format("%s %s %s %s", testFile.getName(), Perm(testFile), lMod, fLen);
         return finalFile;
     }
